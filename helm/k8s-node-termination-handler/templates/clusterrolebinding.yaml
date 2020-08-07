@@ -11,4 +11,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "k8s-node-termination-handler.serviceAccountName" . }}
-  namespace: kube-system
+  namespace: {{ .Release.Namespace }}
