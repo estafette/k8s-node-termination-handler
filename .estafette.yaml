@@ -1,0 +1,70 @@
+builder:
+  track: dev
+
+labels:
+  team: estafette-team
+  language: helm
+
+version:
+  semver:
+    major: 0
+    minor: 1
+    patch: 0
+    labelTemplate: '{{branch}}-{{auto}}'
+    releaseBranch: 0.1.0
+
+stages:
+  build-lint-and-package:
+    parallelStages:
+      lint-helm-chart:
+        image: extensions/helm:dev
+        action: lint
+
+      package-helm-chart:
+        image: extensions/helm:dev
+        action: package
+
+  test-helm-chart:
+    services:
+    - name: kubernetes
+      image: bsycorp/kind:latest-1.14
+      readiness:
+        path: /kubernetes-ready
+        port: 10080
+    image: extensions/helm:dev
+    action: test
+    namespace: kube-system
+    values: |-
+
+  clone-charts-repo:
+    image: extensions/git-clone:dev
+    repo: helm-charts
+    branch: master
+
+  publish-helm-chart:
+    image: extensions/helm:dev
+    action: publish
+
+  slack-notify:
+    image: extensions/slack-build-status:dev
+    workspace: estafette
+    channels:
+    - '#build-status'
+    when:
+      status == 'succeeded' ||
+      status == 'failed'
+
+releases:
+  release:
+    stages:
+      clone-charts-repo:
+        image: extensions/git-clone:dev
+        repo: helm-charts
+        branch: master
+
+      purge-prerelease-helm-charts:
+        image: extensions/helm:dev
+        action: purge
+
+      create-github-release:
+        image: extensions/github-release:dev

@@ -1,0 +1,45 @@
+# Default values for k8s-node-termination-handler.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+resources:
+  limits:
+    cpu: 150m
+    memory: 30Mi
+
+securityContext:
+  capabilities:
+    # Necessary to reboot node
+    add: ["SYS_BOOT"]
+
+tolerations:
+# Run regardless of any existing taints.
+- effect: NoSchedule
+  operator: Exists
+- effect: NoExecute
+  operator: Exists
+
+affinity:
+  nodeAffinity:
+    # Restrict to GPU nodes or preemptible nodes
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: cloud.google.com/gke-accelerator
+          operator: Exists
+      - matchExpressions:
+        - key: cloud.google.com/gke-preemptible
+          operator: Exists

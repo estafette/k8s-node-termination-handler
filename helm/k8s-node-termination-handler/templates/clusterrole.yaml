@@ -1,0 +1,19 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "k8s-node-termination-handler.fullname" . }}
+  labels:
+    {{- include "k8s-node-termination-handler.labels" . | nindent 4 }}
+rules:
+  # Allow Node Termination Handler to get and update nodes (for posting taints).
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "update"]
+  # Allow Node Termination Handler to create events
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create"]
+  # Allow Node Termination Handler to list and delete pods (for draining nodes)
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "delete"]
