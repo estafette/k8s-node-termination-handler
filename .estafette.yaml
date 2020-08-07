@@ -34,7 +34,6 @@ stages:
     image: extensions/helm:dev
     action: test
     namespace: kube-system
-    values: |-
 
   clone-charts-repo:
     image: extensions/git-clone:dev
@@ -68,3 +67,15 @@ releases:
 
       create-github-release:
         image: extensions/github-release:dev
+
+  tooling-estafette:
+    clone: true
+    stages:
+      package-helm-chart:
+        image: extensions/helm:dev
+        action: package
+
+      install:
+        image: extensions/helm:dev
+        action: install
+        namespace: kube-system
