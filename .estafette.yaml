@@ -27,7 +27,7 @@ stages:
   test-helm-chart:
     services:
     - name: kubernetes
-      image: bsycorp/kind:latest-1.14
+      image: bsycorp/kind:latest-1.17
       readiness:
         path: /kubernetes-ready
         port: 10080
@@ -38,11 +38,12 @@ stages:
   clone-charts-repo:
     image: extensions/git-clone:dev
     repo: helm-charts
-    branch: master
+    branch: main
 
   publish-helm-chart:
     image: extensions/helm:dev
     action: publish
+    repoBranch: main
 
   slack-notify:
     image: extensions/slack-build-status:dev
@@ -59,11 +60,12 @@ releases:
       clone-charts-repo:
         image: extensions/git-clone:dev
         repo: helm-charts
-        branch: master
+        branch: main
 
       purge-prerelease-helm-charts:
         image: extensions/helm:dev
         action: purge
+        repoBranch: main
 
       create-github-release:
         image: extensions/github-release:dev
