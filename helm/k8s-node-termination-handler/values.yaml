@@ -15,10 +15,13 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-resources: {}
-  # limits:
-  #   cpu: 150m
-  #   memory: 30Mi
+resources:
+  limits:
+    cpu: 150m
+    memory: 30Mi
+  requests:
+    cpu: 150m
+    memory: 30Mi
 
 securityContext:
   capabilities:
