@@ -63,10 +63,6 @@ spec:
             value: ""
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-        resources:
-          limits:
-            cpu: 150m
-            memory: 30Mi
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
